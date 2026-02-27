@@ -166,7 +166,7 @@ export default function TimelineShiftsAudioGenerator(){
   const backingBufferRef=useRef(null);
   const currentStep=state===STATES.IDLE||state===STATES.RECORDING?STEPS.RECORD:state===STATES.HAS_AUDIO?STEPS.REVIEW:STEPS.SHIFT;
   const cleanup=useCallback(()=>{if(streamRef.current){streamRef.current.getTracks().forEach(t=>t.stop());streamRef.current=null;}if(timerRef.current){clearInterval(timerRef.current);timerRef.current=null;}},[]);
-  const shiftPalette=useCallback(()=>setPalIdx(p=>(p+1)%PALETTES.length),[]);
+  const shiftPalette=useCallback(()=>setPalIdx(p=>{const n=(p+1)%PALETTES.length;window.dispatchEvent(new CustomEvent('tts-palette-shift',{detail:n}));return n;}),[]);
 
   // Pre-load backing track from URL
   useEffect(()=>{if(!BACKING_TRACK_URL)return;setBackingStatus("loading");const ac=new(window.AudioContext||window.webkitAudioContext)();fetch(BACKING_TRACK_URL).then(r=>{if(!r.ok)throw new Error();return r.arrayBuffer();}).then(ab=>ac.decodeAudioData(ab)).then(buf=>{backingBufferRef.current=buf;setBackingStatus("loaded");}).catch(()=>setBackingStatus("fallback"));return()=>ac.close().catch(()=>{});},[]);
@@ -221,7 +221,7 @@ export default function TimelineShiftsAudioGenerator(){
         .ts *,.ts *::before,.ts *::after{box-sizing:border-box;margin:0;padding:0}
         .ts{font-family:'DM Sans',sans-serif;color:${pal.textMain};min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;z-index:1;transition:color 0.8s}
         .ts-c{max-width:440px;width:100%;text-align:center}
-        .ts-h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:34px;color:${pal.textMain};margin-bottom:4px;transition:color 0.8s}
+        .ts-h1{font-family:'Livvic',sans-serif;font-weight:700;font-size:20px;letter-spacing:0.15em;text-transform:uppercase;color:${pal.textMain};margin-bottom:40px;transition:color 0.8s}
         .ts-sub{font-size:11px;font-weight:400;letter-spacing:.18em;text-transform:uppercase;color:${pal.textFaint};margin-bottom:48px;transition:color 0.8s}
         .ts-lbl{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:${pal.textSoft};margin-bottom:16px;transition:color 0.8s}
         .ts-btn{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;letter-spacing:.06em;border:1.5px solid ${pal.border};background:transparent;color:${pal.textMain};padding:13px 30px;border-radius:40px;cursor:pointer;transition:all .35s ease;text-transform:uppercase;display:inline-block;text-decoration:none;line-height:1}
@@ -262,8 +262,7 @@ export default function TimelineShiftsAudioGenerator(){
       <PortalButton onShift={shiftPalette} pal={pal}/>
       <div className="ts">
         <div className="ts-c">
-          <h1 className="ts-h1">Tea & Timeline Shifts</h1>
-          <p className="ts-sub">Personal Hypnosis Generator</p>
+          <h1 className="ts-h1">Personal Hypnosis Generator</h1>
           <StepTimeline currentStep={currentStep} isProcessing={state===STATES.PROCESSING} progress={progress} pal={pal}/>
           {shifting&&<div className="ts-exit" style={{minHeight:200}}><p className="ts-hint">Shifting…</p></div>}
           {!shifting&&state===STATES.IDLE&&(<div className="ts-enter">

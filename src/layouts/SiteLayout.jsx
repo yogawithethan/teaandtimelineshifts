@@ -1,66 +1,34 @@
-import { Outlet, NavLink } from 'react-router-dom'
-
-const navItems = [
-  { to: '/', label: 'Home' },
-  { to: '/events', label: 'Events' },
-  { to: '/products', label: 'Products' },
-  { to: '/generator', label: 'Generator' },
-]
+import { Outlet } from 'react-router-dom'
+import { usePalette } from '../context/PaletteContext'
+import BgCrossfade from '../components/BgCrossfade'
+import PortalButton from '../components/PortalButton'
 
 export default function SiteLayout() {
+  const { palIdx, pal } = usePalette()
+
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <nav style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '20px 40px',
-        borderBottom: '1px solid rgba(0,0,0,0.06)',
-      }}>
-        <NavLink to="/" style={{ textDecoration: 'none', color: '#1a1a1a' }}>
-          <span style={{
-            fontFamily: "'Instrument Serif', serif",
-            fontSize: 20,
-            fontWeight: 400,
-          }}>
-            Tea & Timeline Shifts
-          </span>
-        </NavLink>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1 }}>
+      <BgCrossfade palIdx={palIdx} />
 
-        <div style={{ display: 'flex', gap: 32 }}>
-          {navItems.map(item => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              style={({ isActive }) => ({
-                textDecoration: 'none',
-                fontSize: 13,
-                fontWeight: isActive ? 500 : 400,
-                letterSpacing: '0.04em',
-                color: isActive ? '#1a1a1a' : 'rgba(0,0,0,0.4)',
-                transition: 'color 0.3s',
-              })}
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </div>
-      </nav>
+      {/* Fixed portal icon — upper right (from PortalButton component) */}
+      <PortalButton />
 
-      {/* Page content renders here */}
-      <main style={{ flex: 1 }}>
+      <main style={{ flex: 1, position: 'relative', zIndex: 1 }}>
         <Outlet />
       </main>
 
       <footer style={{
+        position: 'relative',
+        zIndex: 1,
         padding: '40px',
-        borderTop: '1px solid rgba(0,0,0,0.06)',
+        borderTop: `1px solid ${pal.border}`,
         textAlign: 'center',
-        fontSize: 12,
-        color: 'rgba(0,0,0,0.3)',
-        letterSpacing: '0.04em',
+        fontSize: 11,
+        letterSpacing: '0.08em',
+        color: pal.textFaint,
+        transition: 'color 0.8s, border-color 0.8s',
       }}>
-        © {new Date().getFullYear()} Tea & Timeline Shifts
+        © 2025 Tea & Timeline Shifts
       </footer>
     </div>
   )
