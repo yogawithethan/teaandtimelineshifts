@@ -2,18 +2,18 @@ import { usePalette } from '../context/PaletteContext'
 
 export default function LogoSmall({ size = 80, style = {} }) {
   const { pal } = usePalette()
-  const c = pal.textMain
+  const c = pal.accent
   const a = pal.accent
 
   return (
     <svg
-      viewBox="0 0 1080 1080"
+      viewBox="78 287 949 558"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={{
         display: 'block',
         width: size,
-        height: size,
+        height: Math.round((558 / 949) * size),
         transition: 'all 0.8s',
         ...style,
       }}
