@@ -2,6 +2,36 @@ import { useState, Fragment } from 'react'
 import { usePalette } from '../context/PaletteContext'
 import Logo from '../components/Logo'
 
+// ─── Icons ────────────────────────────────────────────────────────────────────
+
+function TeapotIcon({ color = 'currentColor', size = 20, style = {} }) {
+  return (
+    <svg viewBox="0 124 810 562" fill="none" xmlns="http://www.w3.org/2000/svg"
+      style={{ display: 'block', height: size, width: 'auto', flexShrink: 0, ...style }}>
+      <path fill={color} fillOpacity="1" fillRule="evenodd"
+        d="M 580.597656 293.4375 C 587.867188 286.542969 598.226562 289.972656 606.5625 282.769531 C 620.316406 270.867188 631.910156 259.238281 647.753906 252.136719 C 703.320312 227.195312 766.878906 246.234375 795.964844 300.609375 C 803.753906 315.1875 808.28125 332.753906 809.515625 353.234375 C 811.882812 392.582031 801.28125 428.976562 777.648438 462.460938 C 759.539062 488.15625 737.964844 509.082031 712.925781 525.273438 C 682.433594 544.996094 658.457031 555.734375 624.191406 572.40625 C 622.511719 573.230469 621.105469 574.570312 620.179688 576.214844 C 606.148438 601.222656 587.183594 621.464844 563.207031 636.902344 C 562.109375 637.585938 561.421875 638.753906 561.320312 640.058594 C 560.667969 649.835938 555.007812 657.210938 544.273438 662.183594 C 533.878906 667.019531 521.222656 670.898438 506.371094 673.8125 C 476.460938 679.679688 446.070312 683.28125 415.199219 684.621094 C 356.238281 687.226562 296.386719 684.722656 238.417969 671.171875 C 219.726562 666.816406 198.425781 661.773438 190.464844 645.71875 C 188.167969 641.085938 186.867188 638.546875 186.625 638.101562 C 185.9375 636.832031 184.910156 635.804688 183.640625 635.117188 C 117.992188 598.890625 82.042969 527.398438 89.589844 453.199219 C 90.652344 442.734375 92.917969 428.566406 96.382812 410.726562 C 96.691406 409.285156 96.726562 407.8125 96.554688 406.371094 C 94.324219 388.945312 92.8125 377.65625 92.027344 372.476562 C 85.714844 331.550781 56.660156 291.3125 12.894531 288.394531 C -6.074219 287.125 -1.785156 268.910156 11.902344 262.667969 C 29.289062 254.671875 46.75 236.253906 71.171875 234.640625 C 90.34375 233.371094 109.722656 237.726562 129.242188 247.777344 C 146.632812 256.730469 163.507812 267.125 179.9375 279.03125 C 180.792969 279.648438 181.960938 279.546875 182.679688 278.789062 L 204.90625 256.5625 C 205.660156 255.804688 205.695312 254.605469 205.011719 253.78125 L 200.070312 248.15625 C 199.179688 247.125 198.765625 245.753906 198.9375 244.417969 C 199.386719 240.574219 201.269531 237.453125 204.632812 235.050781 C 205.113281 234.707031 205.730469 234.535156 206.347656 234.535156 L 218.867188 234.535156 C 219.863281 234.535156 220.824219 234.160156 221.542969 233.507812 C 238.589844 218.6875 257.695312 208.121094 278.890625 201.773438 C 301.804688 194.949219 324.71875 190.660156 347.664062 188.980469 C 348.898438 188.875 349.859375 187.847656 349.859375 186.613281 L 349.859375 170.59375 C 349.859375 167.640625 347.871094 165.035156 345.023438 164.28125 C 338.882812 162.667969 334.5625 160.679688 332.023438 158.34375 C 313.363281 141.363281 334.9375 129.527344 349.894531 126.992188 C 371.023438 123.421875 412.492188 121.46875 426.761719 137.832031 C 429.882812 141.398438 430.84375 146.0625 429.296875 149.835938 C 425.492188 159.203125 417.054688 161.808594 408.339844 165.34375 C 407.175781 165.824219 406.386719 166.921875 406.316406 168.191406 L 405.117188 186.507812 C 405.046875 187.777344 406.007812 188.808594 407.277344 188.84375 C 445.386719 189.90625 499.648438 204.074219 529.144531 231.105469 C 530.105469 232 531.375 232.511719 532.714844 232.617188 L 543.828125 233.335938 C 544.445312 233.371094 545.027344 233.542969 545.574219 233.78125 C 550.550781 236.113281 553.292969 240.4375 553.875 246.75 C 553.980469 247.746094 553.601562 248.738281 552.882812 249.460938 L 549.625 252.71875 C 547.804688 254.535156 547.703125 257.453125 549.382812 259.375 L 578.949219 293.335938 C 579.394531 293.816406 580.117188 293.882812 580.597656 293.4375 Z M 641.753906 519.578125 C 646.246094 519.167969 650.5 518.101562 654.511719 516.421875 C 719.855469 488.632812 781.835938 417.589844 767.324219 341.328125 C 761.5625 310.867188 736.660156 284.621094 703.5625 282.117188 C 668.988281 279.476562 633.074219 295.222656 625.699219 330.558594 C 625.5625 331.277344 625.496094 332.03125 625.53125 332.785156 L 626.457031 353.234375 C 626.523438 354.808594 625.976562 356.320312 624.945312 357.519531 L 620.660156 362.425781 C 619.628906 363.625 619.390625 365.308594 620.042969 366.75 C 641.957031 414.261719 648.578125 464.585938 639.96875 517.65625 C 639.796875 518.71875 640.691406 519.679688 641.753906 519.578125 Z" />
+    </svg>
+  )
+}
+
+function ChevronLeft({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ display: 'block' }}>
+      <path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="2"
+        strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+function ChevronRight({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ display: 'block' }}>
+      <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2"
+        strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
 function InstagramIcon({ color, size = 14 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -25,6 +55,8 @@ function GlobeIcon({ color, size = 14 }) {
   )
 }
 
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
 const LUMA_URL = 'https://lu.ma/7deuollg'
 
 const EVENT = {
@@ -45,7 +77,6 @@ const EVENT = {
   ],
 }
 
-// Event: March 1 2026 7:00 PM EST = March 2 2026 00:00 UTC
 const EVENT_START_UTC = new Date('2026-03-02T00:00:00Z')
 const EVENT_END_UTC   = new Date('2026-03-02T02:00:00Z')
 
@@ -77,14 +108,17 @@ const IS_THIS_YOU = [
   {
     text: "You've done the visualizations, said the affirmations, but there's still a quiet panic underneath.",
     img: '/images/card-bg-1.jpg',
+    gradientAngle: '135deg',
   },
   {
     text: "You know what you want but you can't stop checking whether it's coming.",
     img: '/images/card-bg-2.jpg',
+    gradientAngle: '180deg',
   },
   {
     text: "You've been told to 'let go' a thousand times but nobody's shown you how your body actually does that.",
     img: '/images/card-bg-3.jpg',
+    gradientAngle: '225deg',
   },
 ]
 
@@ -126,6 +160,8 @@ const GUIDES = [
   },
 ]
 
+// ─── Shared components ────────────────────────────────────────────────────────
+
 function SectionEyebrow({ label, pal }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
@@ -165,6 +201,8 @@ function TimelineOrb({ index, pal }) {
   )
 }
 
+// ─── Home ─────────────────────────────────────────────────────────────────────
+
 export default function Home() {
   const { pal } = usePalette()
   const [activeStep, setActiveStep] = useState(0)
@@ -180,7 +218,7 @@ export default function Home() {
   }))
 
   function handleStep(i) {
-    if (i === activeStep) return
+    if (i === activeStep || i < 0 || i >= STEPS.length) return
     setStepFading(true)
     setTimeout(() => { setActiveStep(i); setStepFading(false) }, 220)
   }
@@ -198,9 +236,9 @@ export default function Home() {
           transition: color 0.8s;
         }
 
-        /* ── CTA button ── */
+        /* ── CTA ── */
         .home-cta {
-          display: inline-block;
+          display: inline-flex; align-items: center; gap: 8px;
           font-family: 'Livvic', sans-serif;
           font-size: 13px; font-weight: 700;
           letter-spacing: 0.18em; text-transform: uppercase;
@@ -208,9 +246,8 @@ export default function Home() {
           color: #ffffff;
           background: ${pal.cta};
           padding: 18px 52px;
-          border-radius: 40px;
-          border: none; cursor: pointer;
-          box-shadow: 0 4px 28px ${pal.cta}66, 0 2px 8px ${pal.cta}44;
+          border-radius: 40px; border: none; cursor: pointer;
+          box-shadow: 0 4px 28px ${pal.cta}55, 0 2px 8px ${pal.cta}33;
           transition: background 0.8s, box-shadow 0.4s ease, transform 0.3s ease;
         }
         .home-cta:hover {
@@ -218,7 +255,6 @@ export default function Home() {
           transform: translateY(-2px);
         }
         .home-cta-pulse { animation: ctaPulse 3.5s ease-in-out infinite; }
-
         @keyframes ctaPulse {
           0%, 100% { box-shadow: 0 4px 28px ${pal.cta}55, 0 2px 8px ${pal.cta}33; }
           50%       { box-shadow: 0 6px 48px ${pal.cta}99, 0 3px 16px ${pal.cta}66; }
@@ -231,6 +267,38 @@ export default function Home() {
           border: 1px solid ${pal.border}; border-radius: 20px;
           transition: background 0.8s, border-color 0.8s;
         }
+
+        /* ── Is This You cards ── */
+        .home-ity-grid { display: flex; gap: 24px; align-items: stretch; }
+        @media (max-width: 700px) { .home-ity-grid { flex-direction: column; } }
+
+        .home-ity-wrapper { transition: none; }
+        .home-ity-card {
+          border-radius: 20px;
+          backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+          transition: transform 0.3s ease, background 0.8s, border-color 0.8s;
+        }
+        .home-ity-wrapper:hover .home-ity-card { transform: translateY(-4px); }
+        .home-ity-orb {
+          transition: box-shadow 0.3s ease, background 0.8s;
+        }
+        .home-ity-wrapper:hover .home-ity-orb {
+          box-shadow: 0 0 22px 9px ${pal.accent}cc, 0 0 5px 2px #ffffffaa !important;
+        }
+
+        /* ── Carousel arrows ── */
+        .home-carousel-arrow {
+          color: ${pal.textSoft};
+          background: ${pal.glass};
+          backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+          border: 1px solid ${pal.border};
+          border-radius: 50%;
+          width: 40px; height: 40px;
+          display: flex; align-items: center; justify-content: center;
+          cursor: pointer; flex-shrink: 0;
+          transition: color 0.2s ease, background 0.8s, border-color 0.8s, opacity 0.3s;
+        }
+        .home-carousel-arrow:hover { color: ${pal.textMain}; }
 
         /* ── Guide cards ── */
         .home-guide-card {
@@ -250,10 +318,6 @@ export default function Home() {
           letter-spacing: 0.02em; transition: opacity 0.3s, color 0.8s;
         }
         .home-guide-link:hover { opacity: 0.7; }
-
-        /* ── Is This You cards ── */
-        .home-ity-grid { display: flex; gap: 20px; align-items: stretch; }
-        @media (max-width: 700px) { .home-ity-grid { flex-direction: column; } }
 
         /* ── Misc ── */
         .home-divider {
@@ -285,7 +349,6 @@ export default function Home() {
           .home-section-heading { font-size: 18px; }
           .home-hero { padding-top: 110px !important; }
         }
-
         @keyframes timelineOrbPulse {
           0%, 100% { box-shadow: 0 0 4px 2px ${pal.accent}44; }
           50%       { box-shadow: 0 0 10px 5px ${pal.accent}88, 0 0 2px 1px #ffffff77; }
@@ -315,6 +378,7 @@ export default function Home() {
 
           <a href={LUMA_URL} target="_blank" rel="noopener noreferrer"
             className="home-cta home-cta-pulse">
+            <TeapotIcon color="#ffffff" size={18} />
             Join the Next Tea Circle
           </a>
         </section>
@@ -323,49 +387,35 @@ export default function Home() {
 
         {/* ── Is This You? ── */}
         <section style={{ padding: '0 24px 100px' }}>
-          <div style={{ maxWidth: 860, margin: '0 auto' }}>
+          <div style={{ maxWidth: 900, margin: '0 auto' }}>
             <SectionEyebrow label="Is This You" pal={pal} />
 
             <div className="home-ity-grid">
               {IS_THIS_YOU.map((card, i) => (
-                <div key={i} style={{
-                  flex: 1, minWidth: 0,
-                  position: 'relative', overflow: 'hidden',
-                  borderRadius: 20, border: `1px solid ${pal.border}`,
-                  transition: 'border-color 0.8s',
-                }}>
-                  {/* Background texture image */}
-                  <img
-                    src={card.img}
-                    alt=""
-                    aria-hidden="true"
-                    style={{
-                      position: 'absolute', inset: 0,
-                      width: '100%', height: '100%',
-                      objectFit: 'cover', opacity: 0.18,
-                      filter: 'blur(3px)', transform: 'scale(1.08)',
-                      pointerEvents: 'none',
-                    }}
-                  />
-                  {/* Glass surface */}
-                  <div style={{
-                    position: 'absolute', inset: 0,
-                    background: pal.glass,
-                    backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+                <div key={i} className="home-ity-wrapper"
+                  style={{ flex: 1, minWidth: 0, position: 'relative', paddingTop: 12 }}>
+
+                  {/* Prominent orb overlapping top edge */}
+                  <div className="home-ity-orb" style={{
+                    position: 'absolute', top: 0, left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 24, height: 24, borderRadius: '50%',
+                    background: `radial-gradient(circle, #ffffff 0%, ${pal.accent} 30%, transparent 100%)`,
+                    boxShadow: `0 0 14px 5px ${pal.accent}99, 0 0 4px 1px #ffffff88`,
+                    zIndex: 2, transition: 'all 0.8s',
                   }} />
-                  {/* Content */}
-                  <div style={{ position: 'relative', zIndex: 1, padding: '40px 28px 44px', textAlign: 'center' }}>
-                    {/* Orb accent */}
-                    <div style={{
-                      width: 8, height: 8, borderRadius: '50%',
-                      background: `radial-gradient(circle, #ffffff 0%, ${pal.accent} 35%, transparent 100%)`,
-                      boxShadow: `0 0 7px 3px ${pal.accent}66`,
-                      margin: '0 auto 28px', transition: 'all 0.8s',
-                    }} />
+
+                  {/* Card */}
+                  <div className="home-ity-card" style={{
+                    background: `linear-gradient(${card.gradientAngle}, ${pal.bg[0]}E8 0%, ${pal.accent}28 100%)`,
+                    border: `1px solid ${pal.accent}33`,
+                    padding: '44px 28px 40px',
+                    textAlign: 'center',
+                  }}>
                     <p style={{
                       fontFamily: "'DM Sans', sans-serif",
-                      fontSize: 17, fontStyle: 'italic',
-                      lineHeight: 1.85, color: pal.textSoft,
+                      fontSize: 19, fontStyle: 'italic',
+                      lineHeight: 1.85, color: pal.textMain,
                       transition: 'color 0.8s',
                     }}>
                       {card.text}
@@ -380,14 +430,14 @@ export default function Home() {
         <div className="home-divider" />
 
         {/* ── How a Round Unfolds — Three-Step Carousel ── */}
-        <section style={{ padding: '0 24px 60px' }}>
+        <section style={{ padding: '0 24px 48px' }}>
           <div style={{ maxWidth: 600, margin: '0 auto' }}>
             <SectionEyebrow label="The Method" pal={pal} />
             <h2 className="home-section-heading" style={{ textAlign: 'center' }}>
               How a Round Unfolds
             </h2>
 
-            {/* ── Timeline ── */}
+            {/* Timeline */}
             <div style={{
               display: 'flex', alignItems: 'flex-start',
               maxWidth: 420, margin: '0 auto 16px', padding: '0 10px',
@@ -403,7 +453,6 @@ export default function Home() {
                       padding: 0, width: 90,
                     }}
                   >
-                    {/* Orb */}
                     <div style={{
                       width: 14, height: 14, borderRadius: '50%',
                       background: i === activeStep
@@ -414,7 +463,6 @@ export default function Home() {
                         : `0 0 4px 2px ${pal.accent}33`,
                       transition: 'all 0.4s ease',
                     }} />
-                    {/* Label */}
                     <span style={{
                       fontFamily: "'Livvic', sans-serif",
                       fontSize: 10, fontWeight: 700,
@@ -426,7 +474,6 @@ export default function Home() {
                     </span>
                   </button>
 
-                  {/* Connector line */}
                   {i < STEPS.length - 1 && (
                     <div style={{
                       flex: 1, height: 1,
@@ -439,47 +486,76 @@ export default function Home() {
               ))}
             </div>
 
-            {/* ── Step content ── */}
-            <div style={{
-              textAlign: 'center',
-              opacity: stepFading ? 0 : 1,
-              transition: 'opacity 0.22s ease',
-              padding: '8px 0 0',
-            }}>
-              <p style={{
-                fontFamily: "'Livvic', sans-serif",
-                fontSize: 11, fontWeight: 700,
-                letterSpacing: '0.22em', textTransform: 'uppercase',
-                color: pal.accent, marginBottom: 10,
-                transition: 'color 0.8s',
+            {/* Step content + arrows */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0 0' }}>
+              {/* Left arrow */}
+              <button
+                className="home-carousel-arrow"
+                onClick={() => handleStep(activeStep - 1)}
+                style={{
+                  opacity: activeStep === 0 ? 0 : 1,
+                  pointerEvents: activeStep === 0 ? 'none' : 'auto',
+                }}
+              >
+                <ChevronLeft size={18} />
+              </button>
+
+              {/* Content */}
+              <div style={{
+                flex: 1, textAlign: 'center',
+                opacity: stepFading ? 0 : 1,
+                transition: 'opacity 0.22s ease',
               }}>
-                {STEPS[activeStep].subtitle}
-              </p>
-              <p style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 16, lineHeight: 1.95,
-                color: pal.textSoft,
-                maxWidth: 520, margin: '0 auto',
-                transition: 'color 0.8s',
-              }}>
-                {STEPS[activeStep].body}
-              </p>
+                <p style={{
+                  fontFamily: "'Livvic', sans-serif",
+                  fontSize: 11, fontWeight: 700,
+                  letterSpacing: '0.22em', textTransform: 'uppercase',
+                  color: pal.accent, marginBottom: 10,
+                  transition: 'color 0.8s',
+                }}>
+                  {STEPS[activeStep].subtitle}
+                </p>
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 16, lineHeight: 1.95,
+                  color: pal.textSoft, transition: 'color 0.8s',
+                }}>
+                  {STEPS[activeStep].body}
+                </p>
+              </div>
+
+              {/* Right arrow */}
+              <button
+                className="home-carousel-arrow"
+                onClick={() => handleStep(activeStep + 1)}
+                style={{
+                  opacity: activeStep === STEPS.length - 1 ? 0 : 1,
+                  pointerEvents: activeStep === STEPS.length - 1 ? 'none' : 'auto',
+                }}
+              >
+                <ChevronRight size={18} />
+              </button>
             </div>
           </div>
         </section>
 
-        {/* ── Condensed transition paragraph ── */}
-        <div style={{ maxWidth: 520, margin: '0 auto', padding: '0 24px 100px', textAlign: 'center' }}>
-          <p style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 17, fontStyle: 'italic',
-            lineHeight: 2.0, color: pal.textSoft,
-            transition: 'color 0.8s',
-          }}>
-            Every round begins the same way — tea poured, bodies settling, breath slowing
-            down. By the time you leave, you're not carrying an idea of change. You're
-            carrying the shift in your body.
-          </p>
+        {/* ── "Every Round" glass quote card ── */}
+        <div style={{ maxWidth: 700, margin: '0 auto', padding: '0 24px 100px' }}>
+          <div className="home-glass-card" style={{ padding: '40px 48px', textAlign: 'center' }}>
+            <div style={{ marginBottom: 22, display: 'flex', justifyContent: 'center', opacity: 0.45 }}>
+              <TeapotIcon color={pal.accent} size={28} />
+            </div>
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 17, fontStyle: 'italic',
+              lineHeight: 2.0, color: pal.textSoft,
+              transition: 'color 0.8s',
+            }}>
+              Every round begins the same way — tea poured, bodies settling, breath slowing
+              down. By the time you leave, you're not carrying an idea of change. You're
+              carrying the shift in your body.
+            </p>
+          </div>
         </div>
 
         <div className="home-divider" />
@@ -509,7 +585,6 @@ export default function Home() {
                 </span>
               </div>
 
-              {/* Event name */}
               <h3 style={{
                 fontFamily: "'Livvic', sans-serif", fontWeight: 700, fontSize: 22,
                 letterSpacing: '0.1em', textTransform: 'uppercase',
@@ -519,7 +594,6 @@ export default function Home() {
                 {EVENT.name}
               </h3>
 
-              {/* Date & time */}
               <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: pal.textSoft, marginBottom: 4, transition: 'color 0.8s' }}>
                 {localEventDate}
               </p>
@@ -530,7 +604,6 @@ export default function Home() {
                 {EVENT.format}
               </p>
 
-              {/* Price + seats */}
               <div style={{ display: 'flex', gap: 20, alignItems: 'baseline', marginBottom: 28, flexWrap: 'wrap' }}>
                 <span style={{ fontFamily: "'Livvic', sans-serif", fontWeight: 700, fontSize: 20, letterSpacing: '0.06em', color: pal.textMain, transition: 'color 0.8s' }}>
                   {EVENT.price}
@@ -539,7 +612,6 @@ export default function Home() {
                 <span style={{ fontSize: 12, color: pal.textFaint, transition: 'color 0.8s' }}>{EVENT.seats}</span>
               </div>
 
-              {/* Divider + inclusions */}
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5, paddingTop: 4, marginBottom: 18 }}>
                   <div style={{ width: 4, height: 4, borderRadius: '50%', background: pal.textSoft, opacity: 0.4, flexShrink: 0, transition: 'all 0.8s' }} />
@@ -557,10 +629,10 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* CTA */}
               <div style={{ textAlign: 'center' }}>
                 <a href={LUMA_URL} target="_blank" rel="noopener noreferrer"
                   className="home-cta home-cta-pulse">
+                  <TeapotIcon color="#ffffff" size={18} />
                   Reserve Your Seat
                 </a>
               </div>
@@ -668,6 +740,7 @@ export default function Home() {
           </p>
           <a href={LUMA_URL} target="_blank" rel="noopener noreferrer"
             className="home-cta home-cta-pulse">
+            <TeapotIcon color="#ffffff" size={18} />
             Join the Next Tea Circle
           </a>
         </section>

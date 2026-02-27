@@ -25,8 +25,8 @@ export default function PortalButton() {
         position: 'fixed',
         top: 20,
         right: 20,
-        width: 32,
-        height: 32,
+        width: 48,
+        height: 48,
         border: 'none',
         background: 'transparent',
         cursor: 'pointer',
@@ -39,7 +39,7 @@ export default function PortalButton() {
         transform: hover ? 'scale(1.15)' : 'scale(1)',
       }}
     >
-      <PortalIcon color={pal.accent} size={24} />
+      <PortalIcon color={pal.accent} size={36} />
     </button>
   )
 }
