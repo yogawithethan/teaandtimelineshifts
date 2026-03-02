@@ -4,7 +4,10 @@ import SiteLayout from './layouts/SiteLayout'
 import Home from './pages/Home'
 import Events from './pages/Events'
 import Products from './pages/Products'
+import Recordings from './pages/Recordings'
+import RecordingSuccess from './pages/RecordingSuccess'
 import Generator from './pages/Generator'
+import FloatingNav from './components/FloatingNav'
 import LogoSmall from './components/LogoSmall'
 
 function LogoSmallLink() {
@@ -33,6 +36,8 @@ export default function App() {
   return (
     <PaletteProvider>
       <LogoSmallLink />
+      {/* FloatingNav appears on all pages — palette-aware, route-aware */}
+      <FloatingNav />
       <Routes>
         {/* Generator is fully self-contained with its own palette system */}
         <Route path="/generator" element={<Generator />} />
@@ -42,6 +47,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/events" element={<Events />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/recordings" element={<Recordings />} />
+          <Route path="/recordings/success" element={<RecordingSuccess />} />
         </Route>
       </Routes>
     </PaletteProvider>

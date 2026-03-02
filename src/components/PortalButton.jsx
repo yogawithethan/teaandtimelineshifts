@@ -25,21 +25,25 @@ export default function PortalButton() {
         position: 'fixed',
         top: 20,
         right: 20,
-        width: 48,
-        height: 48,
-        border: 'none',
-        background: 'transparent',
+        width: 52,
+        height: 52,
+        borderRadius: '50%',
+        background: hover ? `${pal.glass.replace(/[\d.]+\)$/, a => String(Math.min(parseFloat(a) * 1.8, 0.88)) + ')')}` : pal.glass,
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: `1px solid ${pal.border}`,
+        boxShadow: `0 4px 24px ${pal.shadow}, 0 1px 4px rgba(0,0,0,0.05)`,
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        transition: 'all 0.4s ease',
+        transition: 'transform 0.4s ease, opacity 0.4s ease, background 0.25s, border-color 0.8s, box-shadow 0.8s',
         zIndex: 100,
-        opacity: hover ? 1 : 0.8,
-        transform: hover ? 'scale(1.15)' : 'scale(1)',
+        opacity: hover ? 1 : 0.85,
+        transform: hover ? 'scale(1.08)' : 'scale(1)',
       }}
     >
-      <PortalIcon color={pal.accent} size={36} />
+      <PortalIcon color={pal.accent} size={28} />
     </button>
   )
 }

@@ -10,7 +10,7 @@ export default function SiteLayout() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1 }}>
       <BgCrossfade palIdx={palIdx} />
 
-      {/* Fixed portal icon — upper right (from PortalButton component) */}
+      {/* Portal icon — bottom-right, away from the nav bar */}
       <PortalButton />
 
       <main style={{ flex: 1, position: 'relative', zIndex: 1 }}>

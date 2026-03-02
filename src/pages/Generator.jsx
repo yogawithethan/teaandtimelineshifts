@@ -241,8 +241,8 @@ function DurationSelector({value,onChange,pal}){
 function PortalButton({onShift,pal}){
   const[hover,setHover]=useState(false);
   return(<button onClick={onShift} onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)} title="Shift colors"
-    style={{position:"fixed",top:20,right:20,width:32,height:32,border:"none",background:"transparent",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.4s ease",zIndex:100,opacity:hover?1:0.8,transform:hover?"scale(1.15)":"scale(1)"}}>
-    <PortalIcon color={pal.accent} size={24}/>
+    style={{position:"fixed",top:20,right:20,width:52,height:52,borderRadius:"50%",background:hover?pal.glass.replace(/[\d.]+\)$/,a=>String(Math.min(parseFloat(a)*1.8,0.88))+")")  :pal.glass,backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${pal.border}`,boxShadow:`0 4px 24px ${pal.shadow},0 1px 4px rgba(0,0,0,0.05)`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"transform 0.4s ease,opacity 0.4s ease,background 0.25s,border-color 0.8s,box-shadow 0.8s",zIndex:100,opacity:hover?1:0.85,transform:hover?"scale(1.08)":"scale(1)"}}>
+    <PortalIcon color={pal.accent} size={28}/>
   </button>);
 }
 
@@ -256,7 +256,7 @@ function BgCrossfade({palIdx}){
 
 // ── Main Component ──
 export default function TimelineShiftsAudioGenerator(){
-  const[palIdx,setPalIdx]=useState(0);const pal=PALETTES[palIdx];
+  const[palIdx,setPalIdx]=useState(()=>typeof window!=='undefined'&&typeof window.__ttsPalIdx==='number'?window.__ttsPalIdx:0);const pal=PALETTES[palIdx];
   const[state,setState]=useState(STATES.IDLE);
   const[voiceBlob,setVoiceBlob]=useState(null),[voiceUrl,setVoiceUrl]=useState(null);
   const[backingBlob,setBackingBlob]=useState(null),[backingName,setBackingName]=useState("");

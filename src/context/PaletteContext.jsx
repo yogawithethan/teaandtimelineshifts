@@ -18,6 +18,8 @@ const PaletteContext = createContext(null)
 
 export function PaletteProvider({ children }) {
   const [palIdx, setPalIdx] = useState(0)
+  // Keep a global in sync so Generator can read the current index on mount
+  if (typeof window !== 'undefined') window.__ttsPalIdx = palIdx
   const pal = PALETTES[palIdx]
   const shiftPalette = useCallback(() => setPalIdx(p => (p + 1) % PALETTES.length), [])
 

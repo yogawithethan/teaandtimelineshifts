@@ -1,6 +1,7 @@
 import { useState, Fragment } from 'react'
 import { usePalette } from '../context/PaletteContext'
 import Logo from '../components/Logo'
+import { siteConfig } from '../config/siteConfig'
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -57,7 +58,7 @@ function GlobeIcon({ color, size = 14 }) {
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
-const LUMA_URL = 'https://lu.ma/7deuollg'
+const LUMA_URL = siteConfig.nextEventUrl
 
 const EVENT = {
   tag: 'Founding Round',

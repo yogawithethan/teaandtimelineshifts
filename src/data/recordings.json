@@ -1,0 +1,15 @@
+[
+  {
+    "id": "round-1",
+    "title": "Round 1 — Founding Circle",
+    "date": "March 1, 2026",
+    "duration": "120 min",
+    "note": "Opening session — nervous system regulation and guided timeline shift.",
+    "vimeoUrl": "https://vimeo.com/1169714710",
+    "vimeoPassword": "first_round",
+    "stripeProductId": "INSERT_STRIPE_PRODUCT_ID",
+    "stripePriceId": "INSERT_STRIPE_PRICE_ID",
+    "price": 33,
+    "available": true
+  }
+]
