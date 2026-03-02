@@ -11,6 +11,8 @@ const STEPS = { RECORD: 0, REVIEW: 1, SHIFT: 2 };
 const STATES = { IDLE: "idle", RECORDING: "recording", HAS_AUDIO: "has_audio", PROCESSING: "processing", DONE: "done" };
 const FADE_DURATION = 2.5;
 const REVERB_MIX = 0.15;
+const END_FADE = 15;       // seconds for the very slow fade-out after final cycle
+const MIN_LOOP_GAP = 2.5;  // minimum silence gap between voice repetitions
 const DURATION_OPTIONS = [10, 20, 30];
 
 const PALETTES = [
@@ -41,6 +43,10 @@ function DownloadIcon({color,size=14}){
   return(<svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={{display:"inline-block",verticalAlign:"middle",marginRight:6}}><path d="M8 2v8m0 0l-3-3m3 3l3-3M3 12h10" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>);
 }
 
+function ResetIcon({color,size=13}){
+  return(<svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={{display:"inline-block",verticalAlign:"middle",marginRight:6}}><path d="M13 8A5 5 0 1 1 8 3" stroke={color} strokeWidth="1.5" strokeLinecap="round"/><polyline points="5.5,1.5 8,3 5.5,4.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>);
+}
+
 // ── Audio Processing ──
 function createReverbImpulse(ctx,d2=1.8,decay=3){const r=ctx.sampleRate,l=r*d2,imp=ctx.createBuffer(2,l,r);for(let c=0;c<2;c++){const d=imp.getChannelData(c);for(let i=0;i<l;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/l,decay);}return imp;}
 
@@ -58,10 +64,74 @@ async function cleanupVoice(ctx,buf){
   return rendered;
 }
 
-function createLoopedBuffer(ctx,src,dur,fade=FADE_DURATION){
-  const r=ctx.sampleRate,sl=src.length,tl=Math.ceil(r*dur),fl=Math.ceil(r*fade),ch=src.numberOfChannels,out=ctx.createBuffer(ch,tl,r);
-  for(let c=0;c<ch;c++){const sd=src.getChannelData(c),od=out.getChannelData(c);let p=0;while(p<tl){const cl2=Math.min(sl,tl-p);for(let i=0;i<cl2;i++){let s=sd[i];if(p>0&&i<fl)s*=i/fl;if(i>=sl-fl&&p+sl<tl)s*=1-(i-(sl-fl))/fl;const gp=p+i;if(gp>=tl-fl)s*=(tl-gp)/fl;od[gp]=(od[gp]||0)+s;}p+=sl-fl;}}
+// Scan backwards to find the last sample above a silence threshold
+function detectLastActive(buf,threshold=0.008){
+  let last=0;
+  for(let c=0;c<buf.numberOfChannels;c++){const d=buf.getChannelData(c);for(let i=d.length-1;i>=0;i--){if(Math.abs(d[i])>threshold){if(i>last)last=i;break;}}}
+  return last;
+}
+
+// Smart voice loop: gap is computed so next cycle starts only after the voice
+// has gone silent; the final cycle plays to completion; then a very slow fade.
+// Returns { buffer, fadeFrom } where fadeFrom is the sample where the fade begins.
+function createVoiceLoop(ctx,src,dur){
+  const r=ctx.sampleRate,sl=src.length,ch=src.numberOfChannels;
+  const tl=Math.ceil(r*dur),efLen=Math.ceil(r*END_FADE);
+  const rampLen=Math.min(Math.ceil(r*0.04),sl); // 40 ms anti-click ramp
+  const lastActive=detectLastActive(src);
+  const silenceTail=sl-lastActive;
+  const gapSamples=Math.max(silenceTail,Math.ceil(r*MIN_LOOP_GAP));
+  const step=lastActive+gapSamples; // next loop starts this many samples after loop start
+  let p=0;while(p+sl<tl)p+=step; // p = start of final loop
+  const totalLen=p+sl+efLen;
+  const out=ctx.createBuffer(ch,totalLen,r);
+  let pos=0;
+  while(pos<=p){
+    for(let c=0;c<ch;c++){
+      const sd=src.getChannelData(c),od=out.getChannelData(c);
+      const copyLen=Math.min(sl,totalLen-pos);
+      for(let i=0;i<copyLen;i++){
+        let s=sd[i];
+        if(pos>0&&i<rampLen)s*=i/rampLen; // gentle ramp-in after first loop
+        od[pos+i]=(od[pos+i]||0)+s;
+      }
+    }
+    pos+=step;
+  }
+  return{buffer:out,fadeFrom:p+lastActive};
+}
+
+// Standard crossfade loop for the backing track (music, no gap needed).
+// totalLen is in samples so the backing matches the voice buffer exactly.
+function createBgLoop(ctx,src,totalLen,fade=FADE_DURATION){
+  const r=ctx.sampleRate,sl=src.length,ch=src.numberOfChannels;
+  const fl=Math.min(Math.ceil(r*fade),Math.floor(sl/2));
+  const out=ctx.createBuffer(ch,totalLen,r);
+  for(let c=0;c<ch;c++){
+    const sd=src.getChannelData(c),od=out.getChannelData(c);
+    let p=0;
+    while(p<totalLen){
+      const cl2=Math.min(sl,totalLen-p);
+      for(let i=0;i<cl2;i++){
+        let s=sd[i];
+        if(p>0&&i<fl)s*=i/fl;
+        if(i>=sl-fl&&p+sl<totalLen)s*=1-(i-(sl-fl))/fl;
+        od[p+i]=(od[p+i]||0)+s;
+      }
+      p+=sl-fl;
+    }
+  }
   return out;
+}
+
+// Apply a linear fade-to-silence in-place, starting at fadeFromSample.
+function applyEndFade(buf,fadeFromSample){
+  const totalLen=buf.length,fadeDur=totalLen-fadeFromSample;
+  if(fadeDur<=0)return;
+  for(let c=0;c<buf.numberOfChannels;c++){
+    const d=buf.getChannelData(c);
+    for(let i=fadeFromSample;i<totalLen;i++)d[i]*=Math.max(0,1-(i-fadeFromSample)/fadeDur);
+  }
 }
 
 async function applyReverb(ctx,buf,wet=REVERB_MIX){
@@ -124,6 +194,37 @@ function AudioPlayer({src,pal}){
   </div>);
 }
 
+// ── Generated Track Player (streams from blob URL, no full decode) ──
+function SimpleAudioPlayer({src,pal}){
+  const[playing,setPlaying]=useState(false),[ct,setCt]=useState(0),[dur,setDur]=useState(0);
+  const elRef=useRef(null),rafRef=useRef(null),playingRef=useRef(false);
+  useEffect(()=>{
+    const el=elRef.current;if(!el||!src)return;
+    playingRef.current=false;setPlaying(false);setCt(0);setDur(0);
+    el.src=src;
+    const onMeta=()=>setDur(el.duration);
+    const onEnd=()=>{playingRef.current=false;setPlaying(false);setCt(0);};
+    el.addEventListener('loadedmetadata',onMeta);el.addEventListener('ended',onEnd);
+    return()=>{el.removeEventListener('loadedmetadata',onMeta);el.removeEventListener('ended',onEnd);playingRef.current=false;el.pause();if(rafRef.current)cancelAnimationFrame(rafRef.current);};
+  },[src]);
+  const tick=useCallback(()=>{const el=elRef.current;if(el)setCt(el.currentTime);if(playingRef.current)rafRef.current=requestAnimationFrame(tick);},[]);
+  const toggle=useCallback(()=>{const el=elRef.current;if(!el)return;if(playingRef.current){playingRef.current=false;el.pause();setPlaying(false);if(rafRef.current)cancelAnimationFrame(rafRef.current);}else{playingRef.current=true;el.play().then(()=>{setPlaying(true);rafRef.current=requestAnimationFrame(tick);}).catch(()=>{playingRef.current=false;});}},[tick]);
+  const handleSeek=useCallback(e=>{const el=elRef.current;if(!el||!dur)return;const r=e.currentTarget.getBoundingClientRect();const pct=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));el.currentTime=pct*dur;setCt(pct*dur);},[dur]);
+  const fmt=t=>(!t||!isFinite(t))?"0:00":`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,"0")}`;
+  const pct=dur>0?(ct/dur)*100:0;
+  return(<>
+    <audio ref={elRef} preload="metadata" style={{display:"none"}}/>
+    <div style={{display:"flex",alignItems:"center",gap:12,padding:"12px 16px",background:pal.glass,backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",borderRadius:30,border:`1px solid ${pal.border}`,transition:"all 0.8s",marginTop:20}}>
+      <button onClick={toggle} style={{width:34,height:34,borderRadius:"50%",border:"none",background:pal.border,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.8s"}}>
+        {playing?<svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="1" width="3.5" height="10" rx="1" fill={pal.textSoft}/><rect x="7.5" y="1" width="3.5" height="10" rx="1" fill={pal.textSoft}/></svg>:<svg width="12" height="12" viewBox="0 0 12 12"><polygon points="3,0 12,6 3,12" fill={pal.textSoft}/></svg>}
+      </button>
+      <span style={{fontSize:11,color:pal.textFaint,fontVariantNumeric:"tabular-nums",minWidth:32,flexShrink:0,transition:"color 0.8s"}}>{fmt(ct)}</span>
+      <div onClick={handleSeek} style={{flex:1,height:24,cursor:"pointer",display:"flex",alignItems:"center"}}><div style={{width:"100%",height:3,background:pal.border,borderRadius:2,position:"relative",transition:"background 0.8s"}}><div style={{width:`${pct}%`,height:"100%",background:pal.textFaint,borderRadius:2,transition:"width 0.1s linear,background 0.8s"}}/></div></div>
+      <span style={{fontSize:11,color:pal.textFaint,fontVariantNumeric:"tabular-nums",minWidth:32,flexShrink:0,textAlign:"right",transition:"color 0.8s"}}>{fmt(dur)}</span>
+    </div>
+  </>);
+}
+
 // ── Duration Selector ──
 function DurationSelector({value,onChange,pal}){
   const idx=DURATION_OPTIONS.indexOf(value),iw=72;
@@ -180,34 +281,38 @@ export default function TimelineShiftsAudioGenerator(){
     if(!voiceBlob)return;const dur=targetDuration*60;
     setShifting(true);await new Promise(r=>setTimeout(r,600));setShifting(false);
     setState(STATES.PROCESSING);setProgress(0);setErrorMsg("");
+    const ac=new(window.AudioContext||window.webkitAudioContext)();
     try{
-      const ac=new(window.AudioContext||window.webkitAudioContext)();
       setStatusText("Decoding…");setProgress(0.05);
       const dec=await ac.decodeAudioData(await voiceBlob.arrayBuffer());
       let st;if(dec.numberOfChannels===1){st=ac.createBuffer(2,dec.length,dec.sampleRate);st.getChannelData(0).set(dec.getChannelData(0));st.getChannelData(1).set(dec.getChannelData(0));}else st=dec;
       setStatusText("Cleaning up voice…");setProgress(0.15);await new Promise(r=>setTimeout(r,50));
       const cl=await cleanupVoice(ac,st);
-      setStatusText("Looping…");setProgress(0.3);await new Promise(r=>setTimeout(r,50));
-      const lp=createLoopedBuffer(ac,cl,dur,FADE_DURATION);
-      setStatusText("Adding reverb…");setProgress(0.45);await new Promise(r=>setTimeout(r,50));
-      const rv=await applyReverb(ac,lp,REVERB_MIX);
+      setStatusText("Adding reverb…");setProgress(0.3);await new Promise(r=>setTimeout(r,50));
+      const rv=await applyReverb(ac,cl,REVERB_MIX);
+      setStatusText("Looping…");setProgress(0.45);await new Promise(r=>setTimeout(r,50));
+      const{buffer:lp,fadeFrom}=createVoiceLoop(ac,rv,dur);
+      const bgLen=lp.length; // backing must match voice length exactly
       setStatusText("Preparing backing…");setProgress(0.6);await new Promise(r=>setTimeout(r,50));
       let bk;
       if(backingBlob){
-        bk=createLoopedBuffer(ac,await ac.decodeAudioData(await backingBlob.arrayBuffer()),dur,FADE_DURATION);
+        bk=createBgLoop(ac,await ac.decodeAudioData(await backingBlob.arrayBuffer()),bgLen);
       } else if(backingBufferRef.current){
-        bk=createLoopedBuffer(ac,backingBufferRef.current,dur,FADE_DURATION);
+        bk=createBgLoop(ac,backingBufferRef.current,bgLen);
       } else if(BACKING_TRACK_URL){
-        try{const resp=await fetch(BACKING_TRACK_URL);bk=createLoopedBuffer(ac,await ac.decodeAudioData(await resp.arrayBuffer()),dur,FADE_DURATION);}
-        catch{bk=createRichBacking(ac,dur);}
+        try{const resp=await fetch(BACKING_TRACK_URL);bk=createBgLoop(ac,await ac.decodeAudioData(await resp.arrayBuffer()),bgLen);}
+        catch{bk=createRichBacking(ac,bgLen/ac.sampleRate);}
       } else {
-        bk=createRichBacking(ac,dur);
+        bk=createRichBacking(ac,bgLen/ac.sampleRate);
       }
       setStatusText("Mixing…");setProgress(0.75);await new Promise(r=>setTimeout(r,50));
-      const mx=mixBuffers(ac,rv,bk,backingBlob?0.35:0.5);
+      const mx=mixBuffers(ac,lp,bk,backingBlob?0.35:0.5);
+      applyEndFade(mx,fadeFrom);
       setStatusText("Encoding…");setProgress(0.9);await new Promise(r=>setTimeout(r,50));
-      setDownloadUrl(URL.createObjectURL(encodeWAV(mx)));setProgress(1);setStatusText("Shifted.");setState(STATES.DONE);ac.close();
+      const wavUrl=URL.createObjectURL(encodeWAV(mx));
+      setDownloadUrl(wavUrl);setProgress(1);setStatusText("Shifted.");setState(STATES.DONE);
     }catch(err){console.error(err);setErrorMsg("Something went wrong. Try a shorter recording.");setState(STATES.HAS_AUDIO);}
+    finally{ac.close().catch(()=>{});}
   },[voiceBlob,backingBlob,targetDuration]);
 
   const goBack=useCallback(()=>{setState(STATES.IDLE);setVoiceBlob(null);setVoiceUrl(null);setRecordingTime(0);setErrorMsg("");},[]);
@@ -302,9 +407,10 @@ export default function TimelineShiftsAudioGenerator(){
           {!shifting&&state===STATES.DONE&&(<div className="ts-enter">
             <div className="ts-stat">{statusText}</div>
             <p className="ts-done">{targetDuration} minutes. Your voice. Light reverb.{backingName?<><br/>Layered with your backing track.</>:<><br/>Rich ambient backing.</>}<br/>Listen with headphones before sleep.</p>
-            <div className="ts-acts">
+            <SimpleAudioPlayer src={downloadUrl} pal={pal}/>
+            <div className="ts-acts" style={{marginTop:22}}>
               <a href={downloadUrl} download="timeline-shift.wav" className="ts-btn ts-dl"><DownloadIcon color={pal.accent} size={14}/>Download Track</a>
-              <button className="ts-btn ts-sm" onClick={reset}>Start Over</button>
+              <button className="ts-btn ts-sm" onClick={reset} style={{display:"inline-flex",alignItems:"center"}}><ResetIcon color={pal.textSoft} size={13}/>Start Over</button>
             </div>
             <p className="ts-hp">🎧 Headphones required for binaural beats</p>
           </div>)}
