@@ -1,13 +1,13 @@
 // Cloudflare Pages Function — POST /api/create-checkout
-// Uses Stripe REST API directly (no SDK) for full edge-runtime compatibility.
-//
-// Required env vars (Cloudflare Pages dashboard):
-//   STRIPE_SECRET_KEY — sk_live_… or sk_test_…
 
-import recordings from '../../src/data/recordings.json'
+import recordings from '../data/recordings.json'
 
-export async function onRequestPost(context) {
+export async function onRequest(context) {
   const { env, request } = context
+
+  if (request.method !== 'POST') {
+    return json({ error: 'Method not allowed.' }, 405)
+  }
 
   if (!env.STRIPE_SECRET_KEY) {
     return json({ error: 'Stripe key not configured.' }, 500)
@@ -25,7 +25,7 @@ export async function onRequestPost(context) {
     return json({ error: 'Recording not found.' }, 404)
   }
 
-  const origin = new URL(request.url).origin
+  const origin  = new URL(request.url).origin
   const siteUrl = env.SITE_URL || origin
 
   const params = new URLSearchParams()
@@ -47,7 +47,7 @@ export async function onRequestPost(context) {
   }
 
   try {
-    const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+    const res  = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
@@ -55,16 +55,10 @@ export async function onRequestPost(context) {
       },
       body: params.toString(),
     })
-
     const data = await res.json()
-    if (!res.ok) {
-      console.error('Stripe error:', data.error?.message)
-      return json({ error: data.error?.message || 'Could not create checkout session.' }, 500)
-    }
-
+    if (!res.ok) return json({ error: data.error?.message || 'Stripe error.' }, 500)
     return json({ url: data.url })
   } catch (err) {
-    console.error('Fetch error:', err.message)
     return json({ error: err.message || 'Could not create checkout session.' }, 500)
   }
 }
