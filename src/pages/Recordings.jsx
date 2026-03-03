@@ -128,7 +128,7 @@ function RecordingCard({ recording, ownedData, isWatching, onWatch, pal }) {
         /* Preview thumbnail — shown when not watching */
         <div style={{
           position: 'relative',
-          height: 180,
+          aspectRatio: '16 / 9',
           overflow: 'hidden',
           background: thumbnail
             ? `url(${thumbnail}) center/cover no-repeat`
