@@ -30,6 +30,11 @@
       html, body, #root { min-height: 100vh; }
       html { scroll-behavior: smooth; }
       body { font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+
+      /* Mobile: extra bottom clearance for the floating bottom nav */
+      @media (max-width: 767px) {
+        body { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+      }
     </style>
   </head>
   <body>
