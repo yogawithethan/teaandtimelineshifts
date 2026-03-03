@@ -82,6 +82,7 @@ function PasswordRow({ password, pal }) {
 // ─── Recording card ───────────────────────────────────────────────────────────
 
 function RecordingCard({ recording, ownedData, isWatching, onWatch, pal }) {
+  const [purchaseHover, setPurchaseHover] = useState(false)
   // Use manual thumbnailUrl if set; otherwise try Vimeo oEmbed (public videos only)
   const [thumbnail, setThumbnail] = useState(recording.thumbnailUrl || null)
 
@@ -252,6 +253,8 @@ function RecordingCard({ recording, ownedData, isWatching, onWatch, pal }) {
           <div style={{ marginTop: 20 }}>
             <button
               onClick={handlePurchase}
+              onMouseEnter={() => setPurchaseHover(true)}
+              onMouseLeave={() => setPurchaseHover(false)}
               style={{
                 width: '100%',
                 height: 48,
@@ -264,7 +267,9 @@ function RecordingCard({ recording, ownedData, isWatching, onWatch, pal }) {
                 border: 'none',
                 borderRadius: 24,
                 cursor: 'pointer',
-                transition: 'background 0.8s',
+                transition: 'background 0.8s, transform 0.25s ease, box-shadow 0.25s ease',
+                transform: purchaseHover ? 'scale(1.03)' : 'scale(1)',
+                boxShadow: purchaseHover ? `0 6px 28px ${pal.shadow}` : 'none',
               }}
             >{`Purchase — $${recording.price}`}</button>
           </div>
