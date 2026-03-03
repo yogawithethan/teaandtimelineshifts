@@ -260,12 +260,12 @@ export default function Home() {
         .home-cta {
           display: inline-flex; align-items: center; gap: 8px;
           font-family: 'Livvic', sans-serif;
-          font-size: 13px; font-weight: 700;
+          font-size: clamp(10px, 3vw, 13px); font-weight: 700;
           letter-spacing: 0.18em; text-transform: uppercase;
-          text-decoration: none;
+          white-space: nowrap; text-decoration: none;
           color: #ffffff;
           background: ${pal.cta};
-          padding: 18px 52px;
+          padding: 18px clamp(20px, 8vw, 52px);
           border-radius: 40px; border: none; cursor: pointer;
           box-shadow: 0 4px 28px ${pal.cta}55, 0 2px 8px ${pal.cta}33;
           transition: background 0.8s, box-shadow 0.4s ease, transform 0.3s ease;
