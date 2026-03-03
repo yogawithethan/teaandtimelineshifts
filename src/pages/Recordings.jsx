@@ -162,15 +162,6 @@ function RecordingCard({ recording, ownedData, isWatching, onWatch, pal }) {
               borderRadius: 20,
               padding: '4px 10px',
             }}>Recording</span>
-            {recording.duration && (
-              <span style={{
-                fontSize: 9,
-                fontWeight: 500,
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.6)',
-              }}>{recording.duration}</span>
-            )}
           </div>
         </div>
       )}
