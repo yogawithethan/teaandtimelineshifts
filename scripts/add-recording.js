@@ -99,9 +99,13 @@ console.log(`✓  ${stripePrice.id}`)
 
 process.stdout.write('Creating Stripe payment link… ')
 const link = await stripe('/payment_links', {
-  'line_items[0][price]':    stripePrice.id,
-  'line_items[0][quantity]': '1',
-  'metadata[recording_id]':  id,
+  'line_items[0][price]':         stripePrice.id,
+  'line_items[0][quantity]':      '1',
+  'metadata[recording_id]':       id,
+  'metadata[vimeo_password]':     vimeoPassword,
+  'allow_promotion_codes':        'true',
+  'billing_address_collection':   'auto',
+  'phone_number_collection[enabled]': 'false',
 })
 console.log(`✓  ${link.url}`)
 
