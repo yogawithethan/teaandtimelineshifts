@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { usePalette } from '../context/PaletteContext'
 import Logo from '../components/Logo'
 import { siteConfig } from '../config/siteConfig'
@@ -208,27 +208,24 @@ export default function Home() {
   const { pal, shiftPalette } = usePalette()
   const [activeStep, setActiveStep] = useState(0)
   const [stepFading, setStepFading] = useState(false)
-  const sectionRefs = useRef({})
-  const lastTriggeredRef = useRef('hero')
+  const lastHalfRef = useRef(null)
 
-  // Advance palette by one each time a new section scrolls into view
+  // Advance palette once when crossing the page midpoint (either direction)
   useEffect(() => {
-    const sections = Object.values(sectionRefs.current).filter(Boolean)
-    if (!sections.length) return
-    const observer = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          const key = entry.target.dataset.sectionKey
-          if (key && key !== lastTriggeredRef.current) {
-            lastTriggeredRef.current = key
-            if (key !== 'hero') shiftPalette()
-            break
-          }
-        }
+    function getHalf() {
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      return max > 0 && window.scrollY >= max / 2 ? 'bottom' : 'top'
+    }
+    lastHalfRef.current = getHalf()
+    function handleScroll() {
+      const half = getHalf()
+      if (lastHalfRef.current !== half) {
+        lastHalfRef.current = half
+        shiftPalette()
       }
-    }, { threshold: 0.25 })
-    sections.forEach(s => observer.observe(s))
-    return () => observer.disconnect()
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [shiftPalette])
 
   const tz             = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -381,7 +378,7 @@ export default function Home() {
       <div className="home-wrap">
 
         {/* ── Hero ── */}
-        <section className="home-hero" data-section-key="hero" ref={el => { sectionRefs.current['hero'] = el }} style={{
+        <section className="home-hero" style={{
           minHeight: '88vh', display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center',
           textAlign: 'center', padding: '160px 24px 80px',
@@ -409,7 +406,7 @@ export default function Home() {
         <div className="home-divider" />
 
         {/* ── Is This You? ── */}
-        <section data-section-key="is-this-you" ref={el => { sectionRefs.current['is-this-you'] = el }} style={{ padding: '0 24px 100px' }}>
+        <section style={{ padding: '0 24px 100px' }}>
           <div style={{ maxWidth: 900, margin: '0 auto' }}>
             <SectionEyebrow label="Is This You" pal={pal} />
 
@@ -453,7 +450,7 @@ export default function Home() {
         <div className="home-divider" />
 
         {/* ── How a Round Unfolds — Three-Step Carousel ── */}
-        <section data-section-key="method" ref={el => { sectionRefs.current['method'] = el }} style={{ padding: '0 24px 48px' }}>
+        <section style={{ padding: '0 24px 48px' }}>
           <div style={{ maxWidth: 600, margin: '0 auto' }}>
             <SectionEyebrow label="The Method" pal={pal} />
             <h2 className="home-section-heading" style={{ textAlign: 'center' }}>
@@ -563,7 +560,7 @@ export default function Home() {
         </section>
 
         {/* ── "Every Round" glass quote card ── */}
-        <div data-section-key="quote" ref={el => { sectionRefs.current['quote'] = el }} style={{ maxWidth: 700, margin: '0 auto', padding: '0 24px 100px' }}>
+        <div style={{ maxWidth: 700, margin: '0 auto', padding: '0 24px 100px' }}>
           <div className="home-glass-card" style={{ padding: '40px 48px', textAlign: 'center' }}>
             <div style={{ marginBottom: 22, display: 'flex', justifyContent: 'center', opacity: 0.45 }}>
               <TeapotIcon color={pal.accent} size={28} />
@@ -584,7 +581,7 @@ export default function Home() {
         <div className="home-divider" />
 
         {/* ── Upcoming Tea Circle ── */}
-        <section data-section-key="upcoming" ref={el => { sectionRefs.current['upcoming'] = el }} style={{ padding: '0 24px 100px' }}>
+        <section style={{ padding: '0 24px 100px' }}>
           <div style={{ maxWidth: 560, margin: '0 auto' }}>
             <SectionEyebrow label="Next Session" pal={pal} />
             <h2 className="home-section-heading" style={{ textAlign: 'center' }}>
@@ -666,7 +663,7 @@ export default function Home() {
         <div className="home-divider" />
 
         {/* ── Schedule ── */}
-        <section data-section-key="schedule" ref={el => { sectionRefs.current['schedule'] = el }} style={{ padding: '0 24px 100px' }}>
+        <section style={{ padding: '0 24px 100px' }}>
           <div style={{ maxWidth: 560, margin: '0 auto' }}>
             <SectionEyebrow label="Schedule" pal={pal} />
             <h2 className="home-section-heading" style={{ textAlign: 'center' }}>
@@ -702,7 +699,7 @@ export default function Home() {
         <div className="home-divider" />
 
         {/* ── Meet Your Guides ── */}
-        <section data-section-key="guides" ref={el => { sectionRefs.current['guides'] = el }} style={{ padding: '0 24px 120px' }}>
+        <section style={{ padding: '0 24px 120px' }}>
           <div style={{ maxWidth: 720, margin: '0 auto' }}>
             <SectionEyebrow label="Your Hosts" pal={pal} />
             <h2 className="home-section-heading" style={{ textAlign: 'center' }}>
@@ -751,7 +748,7 @@ export default function Home() {
         <div className="home-divider" />
 
         {/* ── Final CTA ── */}
-        <section data-section-key="final-cta" ref={el => { sectionRefs.current['final-cta'] = el }} style={{ padding: '0 24px 120px', textAlign: 'center' }}>
+        <section style={{ padding: '0 24px 120px', textAlign: 'center' }}>
           <p style={{
             fontFamily: "'DM Sans', sans-serif",
             fontSize: 16, fontStyle: 'italic',
