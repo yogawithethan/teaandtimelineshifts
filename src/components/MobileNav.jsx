@@ -83,9 +83,6 @@ export default function MobileNav() {
     document.head.appendChild(el)
   }, [])
 
-  // Generator is full-screen — no nav overlay
-  if (pathname === '/generator') return null
-
   const isHome       = pathname === '/'
   const isRecordings = pathname.startsWith('/recordings')
   const isGenerator  = pathname === '/generator'
