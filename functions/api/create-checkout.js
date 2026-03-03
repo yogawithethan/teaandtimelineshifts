@@ -32,6 +32,7 @@ export async function onRequest(context) {
   params.set('ui_mode', 'embedded')
   params.set('mode', 'payment')
   params.set('metadata[recording_id]', recording.id)
+  if (recording.vimeoPassword) params.set('metadata[vimeo_password]', recording.vimeoPassword)
   params.set('return_url', `${siteUrl}/recordings/success?session_id={CHECKOUT_SESSION_ID}`)
 
   const hasRealPrice = recording.stripePriceId && !recording.stripePriceId.startsWith('INSERT')
