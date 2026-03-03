@@ -15,7 +15,7 @@ function HomeIcon() {
 
 function FilmIcon() {
   return (
-    <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="currentColor"
       strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
       <rect x={2} y={2} width={20} height={20} rx={2.18}/>
       <line x1={7} y1={2} x2={7} y2={22}/>
