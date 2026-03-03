@@ -2,8 +2,12 @@
 
 import recordings from '../data/recordings.json'
 
-export async function onRequestGet(context) {
+export async function onRequest(context) {
   const { env, request } = context
+
+  if (request.method !== 'GET') {
+    return new Response('Method Not Allowed', { status: 405, headers: { Allow: 'GET' } })
+  }
 
   const sessionId = new URL(request.url).searchParams.get('session_id')
   if (!sessionId) return json({ error: 'Missing session_id.' }, 400)

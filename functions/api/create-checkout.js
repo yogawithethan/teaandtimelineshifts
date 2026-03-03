@@ -2,8 +2,12 @@
 
 import recordings from '../data/recordings.json'
 
-export async function onRequestPost(context) {
+export async function onRequest(context) {
   const { env, request } = context
+
+  if (request.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405, headers: { Allow: 'POST' } })
+  }
 
   if (!env.STRIPE_SECRET_KEY) {
     return json({ error: 'Stripe key not configured.' }, 500)

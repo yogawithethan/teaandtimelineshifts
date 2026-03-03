@@ -2,8 +2,16 @@
 
 import recordings from '../data/recordings.json'
 
-export async function onRequestPost(context) {
+export async function onRequest(context) {
   const { env, request } = context
+
+  // Only accept POST — return proper 405 with Allow header if not
+  if (request.method !== 'POST') {
+    return new Response('Method Not Allowed', {
+      status: 405,
+      headers: { Allow: 'POST' },
+    })
+  }
 
   const body = await request.text()
   const sig  = request.headers.get('stripe-signature')
