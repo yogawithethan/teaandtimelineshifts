@@ -2,12 +2,8 @@
 
 import recordings from '../data/recordings.json'
 
-export async function onRequest(context) {
+export async function onRequestPost(context) {
   const { env, request } = context
-
-  if (request.method !== 'POST') {
-    return json({ error: 'Method not allowed.' }, 405)
-  }
 
   let email
   try {
