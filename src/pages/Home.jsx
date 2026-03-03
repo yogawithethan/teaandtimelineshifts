@@ -391,9 +391,7 @@ export default function Home() {
             fontFamily: "'DM Sans', sans-serif", fontSize: 17, lineHeight: 1.9,
             color: pal.textSoft, maxWidth: 500, marginBottom: 52, transition: 'color 0.8s',
           }}>
-            We don't help you think positive and hope it appears. We help your nervous system
-            actually settle — so you stop forcing reality and start entering the flow where
-            what you want is inevitable.
+            Attract what you want. Release your anxious striving towards it.
           </p>
 
           <a href={LUMA_URL} target="_blank" rel="noopener noreferrer"
