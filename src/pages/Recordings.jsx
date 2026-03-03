@@ -82,8 +82,6 @@ function PasswordRow({ password, pal }) {
 // ─── Recording card ───────────────────────────────────────────────────────────
 
 function RecordingCard({ recording, ownedData, isWatching, onWatch, pal }) {
-  const [purchasing, setPurchasing] = useState(false)
-  const [purchaseErr, setPurchaseErr] = useState(null)
   const [thumbnail, setThumbnail] = useState(null)
 
   // Attempt to load Vimeo thumbnail via oEmbed (works for public videos)
@@ -96,25 +94,8 @@ function RecordingCard({ recording, ownedData, isWatching, onWatch, pal }) {
       .catch(() => { /* use gradient fallback */ })
   }, [recording.vimeoUrl])
 
-  async function handlePurchase() {
-    setPurchasing(true)
-    setPurchaseErr(null)
-    try {
-      const res = await fetch('/api/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ recordingId: recording.id }),
-      })
-      const text = await res.text()
-      if (!text) throw new Error(`Server returned empty response (${res.status})`)
-      let data
-      try { data = JSON.parse(text) } catch { throw new Error(`Unexpected response (${res.status})`) }
-      if (data.error) throw new Error(data.error)
-      window.location.href = data.url
-    } catch (err) {
-      setPurchaseErr(err.message || 'Could not start checkout.')
-      setPurchasing(false)
-    }
+  function handlePurchase() {
+    window.open(recording.stripePaymentLink, '_blank', 'noopener')
   }
 
   const embedUrl = ownedData ? vimeoEmbedUrl(ownedData.vimeoUrl) : null
@@ -279,7 +260,6 @@ function RecordingCard({ recording, ownedData, isWatching, onWatch, pal }) {
           <div style={{ marginTop: 20 }}>
             <button
               onClick={handlePurchase}
-              disabled={purchasing}
               style={{
                 width: '100%',
                 height: 48,
@@ -288,23 +268,13 @@ function RecordingCard({ recording, ownedData, isWatching, onWatch, pal }) {
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
                 color: '#fff',
-                background: purchasing ? pal.textFaint : pal.cta,
+                background: pal.cta,
                 border: 'none',
                 borderRadius: 24,
-                cursor: purchasing ? 'default' : 'pointer',
-                transition: 'background 0.3s',
+                cursor: 'pointer',
+                transition: 'background 0.8s',
               }}
-            >{purchasing ? '…' : `Purchase — $${recording.price}`}</button>
-            {purchaseErr && (
-              <p style={{
-                marginTop: 8,
-                fontSize: 10,
-                color: pal.textFaint,
-                textAlign: 'center',
-                lineHeight: 1.5,
-                transition: 'color 0.8s',
-              }}>{purchaseErr}</p>
-            )}
+            >{`Purchase — $${recording.price}`}</button>
           </div>
         )}
       </div>

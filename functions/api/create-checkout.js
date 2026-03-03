@@ -25,11 +25,10 @@ export async function onRequestPost(context) {
   const siteUrl = env.SITE_URL || origin
 
   const params = new URLSearchParams()
+  params.set('ui_mode', 'embedded')
   params.set('mode', 'payment')
   params.set('metadata[recording_id]', recording.id)
-  params.set('success_url', `${siteUrl}/recordings/success?session_id={CHECKOUT_SESSION_ID}`)
-  params.set('cancel_url', `${siteUrl}/recordings`)
-  params.append('payment_method_types[]', 'card')
+  params.set('return_url', `${siteUrl}/recordings/success?session_id={CHECKOUT_SESSION_ID}`)
 
   const hasRealPrice = recording.stripePriceId && !recording.stripePriceId.startsWith('INSERT')
   if (hasRealPrice) {
@@ -53,7 +52,7 @@ export async function onRequestPost(context) {
     })
     const data = await res.json()
     if (!res.ok) return json({ error: data.error?.message || 'Stripe error.' }, 500)
-    return json({ url: data.url })
+    return json({ clientSecret: data.client_secret })
   } catch (err) {
     return json({ error: err.message || 'Could not create checkout session.' }, 500)
   }

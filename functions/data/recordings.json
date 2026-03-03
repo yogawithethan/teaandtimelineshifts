@@ -7,8 +7,9 @@
     "note": "Opening session — nervous system regulation and guided timeline shift.",
     "vimeoUrl": "https://vimeo.com/1169714710",
     "vimeoPassword": "first_round",
-    "stripeProductId": "INSERT_STRIPE_PRODUCT_ID",
-    "stripePriceId": "INSERT_STRIPE_PRICE_ID",
+    "stripeProductId": "prod_U4qm6SNAizrbNy",
+    "stripePriceId": "price_1T6h4uJF5JAOVtlWntyyiNqT",
+    "stripePaymentLink": "https://buy.stripe.com/14AfZi8LrbBN4hOfEM67S00",
     "price": 33,
     "available": true
   }
