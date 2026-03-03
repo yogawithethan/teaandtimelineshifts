@@ -103,7 +103,7 @@ export default function MobileNav() {
     transition:              'background 0.8s, border-color 0.8s, box-shadow 0.8s',
   }
 
-  const label = {
+  const tabLabel = {
     fontSize:      10,
     fontWeight:    500,
     letterSpacing: '0.07em',
@@ -146,27 +146,19 @@ export default function MobileNav() {
       {/* ── Home circle ── */}
       <Link to="/" style={{
         display:        'flex',
-        flexDirection:  'column',
         alignItems:     'center',
-        gap:            5,
+        justifyContent: 'center',
         textDecoration: 'none',
         flexShrink:     0,
+        width:          56,
+        height:         56,
+        borderRadius:   '50%',
+        ...glass,
+        background:     isHome ? activeGlass : pal.glass,
+        color:          isHome ? pal.textMain : pal.textSoft,
+        transition:     'background 0.3s, color 0.3s, background 0.8s, border-color 0.8s',
       }}>
-        <div style={{
-          ...glass,
-          background:      isHome ? activeGlass : pal.glass,
-          width:           56,
-          height:          56,
-          borderRadius:    '50%',
-          display:         'flex',
-          alignItems:      'center',
-          justifyContent:  'center',
-          color:           isHome ? pal.textMain : pal.textSoft,
-          transition:      'background 0.3s, color 0.3s, background 0.8s, border-color 0.8s',
-        }}>
-          <HomeIcon />
-        </div>
-        <span style={{ ...label, color: isHome ? pal.textMain : pal.textSoft }}>Home</span>
+        <HomeIcon />
       </Link>
 
       {/* ── Scrollable center pill ── */}
@@ -180,6 +172,9 @@ export default function MobileNav() {
           scrollbarWidth:          'none',
           display:                 'flex',
           justifyContent:          'center',
+          /* Vertical padding gives the pill's box-shadow room before the overflow clips it */
+          padding:                 '12px 2px',
+          margin:                  '-12px 0',
         }}
       >
         <div style={{
@@ -194,12 +189,12 @@ export default function MobileNav() {
 
           <Link to="/recordings" style={tabStyle(isRecordings)}>
             <FilmIcon />
-            <span style={{ ...label, color: 'inherit' }}>Recordings</span>
+            <span style={{ ...tabLabel, color: 'inherit' }}>Recordings</span>
           </Link>
 
           <Link to="/generator" style={tabStyle(isGenerator)}>
             <SpiralIcon />
-            <span style={{ ...label, color: 'inherit' }}>Generator</span>
+            <span style={{ ...tabLabel, color: 'inherit' }}>Generator</span>
           </Link>
 
         </div>
@@ -211,31 +206,23 @@ export default function MobileNav() {
         target="_blank"
         rel="noopener noreferrer"
         style={{
-          display:        'flex',
-          flexDirection:  'column',
-          alignItems:     'center',
-          gap:            5,
-          textDecoration: 'none',
-          flexShrink:     0,
-        }}
-      >
-        <div style={{
           '--mob-cta-sa':  ctaShadowA,
           '--mob-cta-sb':  ctaShadowB,
+          display:         'flex',
+          alignItems:      'center',
+          justifyContent:  'center',
+          textDecoration:  'none',
+          flexShrink:      0,
           width:           56,
           height:          56,
           borderRadius:    '50%',
           background:      pal.cta,
-          display:         'flex',
-          alignItems:      'center',
-          justifyContent:  'center',
           color:           '#fff',
           animation:       'tts-mob-cta-pulse 3.5s ease-in-out infinite',
           transition:      'background 0.8s',
-        }}>
-          <TicketIcon />
-        </div>
-        <span style={{ ...label, color: pal.cta, transition: 'color 0.8s' }}>Tickets</span>
+        }}
+      >
+        <TicketIcon />
       </a>
 
     </nav>
