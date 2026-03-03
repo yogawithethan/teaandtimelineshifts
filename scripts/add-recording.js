@@ -29,6 +29,8 @@ if (!STRIPE_KEY) {
   process.exit(1)
 }
 
+const SITE_URL = (process.env.SITE_URL ?? '').replace(/\/$/, '')
+
 // ─── Prompt helper ────────────────────────────────────────────────────────────
 
 const rl = createInterface({ input: process.stdin, output: process.stdout })
@@ -61,7 +63,6 @@ const duration = await ask('Duration (e.g. 90 min)')
 const note     = await ask('Short description (optional)')
 const vimeoUrl      = await ask('Vimeo URL')
 const vimeoPassword = await ask('Vimeo password')
-const thumbnailUrl  = await ask('Thumbnail URL (optional — paste from Vimeo settings)')
 const priceRaw      = await askOr('Price in USD', '33')
 rl.close()
 
@@ -80,9 +81,15 @@ if (existing.find(r => r.id === id)) {
 
 console.log()
 
+// Thumbnail: always stored at /images/recordings/{id}.png in the project
+const thumbnailPath    = `/images/recordings/${id}.png`
+const thumbnailAbsUrl  = SITE_URL ? `${SITE_URL}${thumbnailPath}` : null
+
 process.stdout.write('Creating Stripe product…    ')
-const product = await stripe('/products', { name: title, 'metadata[recording_id]': id })
-console.log(`✓  ${product.id}`)
+const productParams = { name: title, 'metadata[recording_id]': id }
+if (thumbnailAbsUrl) productParams['images[0]'] = thumbnailAbsUrl
+const product = await stripe('/products', productParams)
+console.log(`✓  ${product.id}${thumbnailAbsUrl ? ` (image: ${thumbnailAbsUrl})` : ' (no image — set SITE_URL in .env to add one)'}`)
 
 process.stdout.write('Creating Stripe price…      ')
 const stripePrice = await stripe('/prices', {
@@ -100,9 +107,9 @@ console.log(`✓  ${link.url}`)
 
 const entry = {
   id, title, date,
-  ...(duration     && { duration }),
-  ...(note         && { note }),
-  thumbnailUrl:    thumbnailUrl || '',
+  ...(duration && { duration }),
+  ...(note     && { note }),
+  thumbnailUrl: thumbnailPath,
   vimeoUrl,
   vimeoPassword,
   stripeProductId:   product.id,
