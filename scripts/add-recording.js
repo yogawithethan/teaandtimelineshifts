@@ -59,9 +59,10 @@ const title    = await ask('Title (e.g. Round 2 — Spring Circle)')
 const date     = await ask('Date (e.g. April 5, 2026)')
 const duration = await ask('Duration (e.g. 90 min)')
 const note     = await ask('Short description (optional)')
-const vimeoUrl = await ask('Vimeo URL')
+const vimeoUrl      = await ask('Vimeo URL')
 const vimeoPassword = await ask('Vimeo password')
-const priceRaw = await askOr('Price in USD', '33')
+const thumbnailUrl  = await ask('Thumbnail URL (optional — paste from Vimeo settings)')
+const priceRaw      = await askOr('Price in USD', '33')
 rl.close()
 
 const price = parseFloat(priceRaw)
@@ -99,8 +100,9 @@ console.log(`✓  ${link.url}`)
 
 const entry = {
   id, title, date,
-  ...(duration && { duration }),
-  ...(note     && { note }),
+  ...(duration     && { duration }),
+  ...(note         && { note }),
+  thumbnailUrl:    thumbnailUrl || '',
   vimeoUrl,
   vimeoPassword,
   stripeProductId:   product.id,

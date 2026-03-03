@@ -82,17 +82,18 @@ function PasswordRow({ password, pal }) {
 // ─── Recording card ───────────────────────────────────────────────────────────
 
 function RecordingCard({ recording, ownedData, isWatching, onWatch, pal }) {
-  const [thumbnail, setThumbnail] = useState(null)
+  // Use manual thumbnailUrl if set; otherwise try Vimeo oEmbed (public videos only)
+  const [thumbnail, setThumbnail] = useState(recording.thumbnailUrl || null)
 
-  // Attempt to load Vimeo thumbnail via oEmbed (works for public videos)
   useEffect(() => {
+    if (recording.thumbnailUrl) return  // manual URL takes priority, skip fetch
     const videoId = recording.vimeoUrl?.match(/vimeo\.com\/(\d+)/)?.[1]
     if (!videoId) return
     fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${videoId}&width=640`)
       .then(r => r.ok ? r.json() : null)
       .then(data => { if (data?.thumbnail_url) setThumbnail(data.thumbnail_url) })
-      .catch(() => { /* use gradient fallback */ })
-  }, [recording.vimeoUrl])
+      .catch(() => { /* gradient fallback */ })
+  }, [recording.vimeoUrl, recording.thumbnailUrl])
 
   function handlePurchase() {
     window.open(recording.stripePaymentLink, '_blank', 'noopener')
